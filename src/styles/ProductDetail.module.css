@@ -1,0 +1,17 @@
+.product-title {
+    color: var(--test-color);
+}
+
+.add-to-cart-button {
+    border: none;
+    border-radius: 3px;
+    padding: 5px 35px;
+    margin-top: 3vh;
+    background-color: tomato;
+    color: white;
+}
+
+.Link {
+    color: var(--text-color);
+    font-family: var(--bold-font);
+}

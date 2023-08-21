@@ -1,0 +1,53 @@
+
+.filters-container > div {
+    padding: 15px 0;
+}
+
+.filter-row {
+    justify-content: center;
+    display: flex;
+    align-content: center;
+}
+
+.checkbox {
+    padding: 2.5px 0;
+}
+
+.Card * {
+    margin: none;
+}
+
+.title-text {
+    color: black; /* Set the initial color */
+    font-family: var(--bold-font);
+    transition: color 0.3s ease-in-out; /* Add a smooth transition for color changes */
+}
+
+.Card:hover .title-text {
+    color: var(--test-color); /* Change the color on hover */
+}
+
+.category-text {
+    font-family: var(--text-font);
+    color: lightgray;
+}
+
+.price-text {
+    font-family: var(--text-font);
+    color: gray;
+}
+
+.filters-container .custom-primary-button {
+  background-color: var(--test-color);
+  border: none;
+}
+
+.filters-container .custom-light-button {
+  background-color: var(--secondary-color);
+  border: none;
+}
+
+.login-button {
+  margin: 0 auto; /* Center the button horizontally */
+  width: 75%; /* Set the width to 75% of the parent container */
+}
