@@ -1,3 +1,6 @@
+// npm run devStart
+require('dotenv').config();
+
 const Joi = require('joi');
 const express = require('express');
 const bcrypt = require('bcrypt');
@@ -6,12 +9,13 @@ const cors = require('cors');
 const app = express();
 
 const PORT = process.env.PORT || 3001;
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3001';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 const SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 10;
 const JWT_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
 app.use(express.json());
-app.use(cors({ credentials: true, origin: CORS_ORIGIN })); // Replace with your frontend domain
+app.use(cors({ credentials: true, origin: CORS_ORIGIN }));; // Replace with your frontend domain
 
 const registerSchema = Joi.object({
   username: Joi.string().min(3).max(30).required(),
@@ -54,6 +58,7 @@ app.use((err, req, res, next) => {
   }
 });
 
+
 const users = [];
 const orders = [];
 
@@ -62,6 +67,7 @@ app.get('/users', (req, res) => {
 });
 
 app.post(`/users/register`, async (req, res) => {
+
   try {
     const { error } = registerSchema.validate(req.body);
     if (error) {
@@ -74,6 +80,7 @@ app.post(`/users/register`, async (req, res) => {
   } catch (error) {
     res.status(500).send('Error registering. Please try again.');
   }
+
 });
 
 app.post(`/users/login`, async (req, res) => {
@@ -111,6 +118,7 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+
 // DELETE endpoint for removing an item from the cart
 app.delete(`/users/cart/:productId`, authenticateToken, async (req, res) => {
   try {
@@ -140,6 +148,7 @@ app.delete(`/users/cart/:productId`, authenticateToken, async (req, res) => {
     res.status(500).send('An error occurred while removing the item from the cart. Please try again later.');
   }
 });
+
 
 app.post('/users/place-order', authenticateToken, async (req, res, next) => {
   try {
@@ -177,6 +186,7 @@ app.post('/users/place-order', authenticateToken, async (req, res, next) => {
   }
 });
 
+
 // GET endpoint to retrieve a user's orders
 app.get('/users/orders', authenticateToken, (req, res, next) => {
   try {
@@ -209,6 +219,7 @@ app.get('/users/cart', authenticateToken, (req, res, next) => {
     next(error);
   }
 });
+
 
 app.post(`/users/:id/cart`, authenticateToken, async (req, res) => {
   const { id } = req.params; // User's id from the URL parameter
