@@ -14,27 +14,27 @@ const productsSlice = createSlice({
   },
   reducers: {
     setProducts: (state, action) => {
-      state.products = action.payload;
+      return { ...state, products: action.payload };
     },
     setNameFilter: (state, action) => {
-      state.nameFilter = action.payload;
+      return { ...state, nameFilter: action.payload };
     },
     setCategoryFilter: (state, action) => {
-      state.categoryFilter = action.payload;
+      return { ...state, categoryFilter: action.payload };
     },
     setMinRatingFilter: (state, action) => {
-      state.minRatingFilter = action.payload;
+      return { ...state, minRatingFilter: action.payload };
     },
     setMinPriceFilter: (state, action) => {
-        state.minPriceFilter = action.payload;
+      return { ...state, minPriceFilter: action.payload };
     },
     setMaxPriceFilter: (state, action) => {
-      state.maxPriceFilter = action.payload;
+      return { ...state, maxPriceFilter: action.payload };
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
-      state.products = action.payload;
+      return { ...state, products: action.payload };
     });
   },
 });
@@ -48,4 +48,5 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
 });
 
 export const { setProducts, setNameFilter, setCategoryFilter, setMinRatingFilter, setMinPriceFilter, setMaxPriceFilter } = productsSlice.actions;
+
 export default productsSlice.reducer;

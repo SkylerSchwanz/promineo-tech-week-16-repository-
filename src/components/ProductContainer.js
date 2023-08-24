@@ -12,7 +12,7 @@ function ProductContainer() {
 
   // Apply filters based on the filters object
   const filteredProducts = products.filter((product) => {
-    // Apply your filter logic using the filters object
+    // Apply filter logic using the filters object
     const nameMatch = product.title.toLowerCase().includes(filters.nameFilter.toLowerCase());
     const categoryMatch = product.category.toLowerCase() === filters.categoryFilter.toLowerCase();
     const ratingMatch = product.rating.rate >= filters.minRatingFilter;
@@ -31,12 +31,10 @@ function ProductContainer() {
     <Container fluid className={styles['product-container']}>
       <Row className={styles['filter-row']} style={{ padding: '10vh 0' }}>
         <Col xs={12} md={2} className="p-3">
-          {/* Filters component */}
           <Filters />
         </Col>
 
         <Col xs={12} md={8}>
-          {/* Render filteredProducts */}
           <Row xs={2} md={3} lg={4} className="g-4">
             {filteredProducts.map((product) => (
               <Col key={product.id}>

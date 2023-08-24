@@ -11,58 +11,69 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addItemToCart(state, action) {
-      // Check if the product is already in the cart
       const existingCartItem = state.items.find((item) => item.id === action.payload.id);
 
       if (existingCartItem) {
-        // Update the quantity of the existing cart item
-        existingCartItem.quantity += 1;
+        return {
+          ...state,
+          items: state.items.map((item) => (item.id === action.payload.id ? { ...item, quantity: item.quantity + 1 } : item)),
+        };
       } else {
-        // Add the new item to the cart
-        state.items.push({ ...action.payload, quantity: 1 });
+        return {
+          ...state,
+          items: [...state.items, { ...action.payload, quantity: 1 }],
+        };
       }
     },
     removeItemFromCart(state, action) {
-      // Find the index of the first item in the cart with a matching ID
-      const index = state.items.findIndex((item) => item.id === action.payload);
-
-      // If an item with a matching ID was found, remove it from the cart
-      if (index !== -1) {
-        state.items.splice(index, 1);
-      }
+      const updatedItems = state.items.filter((item) => item.id !== action.payload);
+      return {
+        ...state,
+        items: updatedItems,
+      };
     },
     updateItemQuantity(state, action) {
       const { productId, quantity } = action.payload;
-      state.items.forEach((item, index) => console.log(`updateItemQuantity Loop! Product #${item.id} has index #${index} || Selected product id: ${productId} / selected quantity: ${quantity}`))
-      console.log(productId);
-      const index = state.items.findIndex((item) => item.id === parseInt(productId));
-
-      console.log(`updateItemQuantity fired on product '${state.items[index].title}'.. quantity #${quantity}`);
-      if (index !== -1) {
-        console.log(`updateItemQuantity fired on product '${state.items[index].title}'.. quantity #${quantity}`);
-        state.items[index].quantity = parseInt(quantity);
-      }
+      const updatedItems = state.items.map((item) => (item.id === parseInt(productId) ? { ...item, quantity: parseInt(quantity) } : item));
+      return {
+        ...state,
+        items: updatedItems,
+      };
     },
     toggleItemDetails(state, action) {
-      const item = state.items.find((item) => item.id === action.payload);
-      if (item) {
-        item.showDetails = !item.showDetails;
-      }
+      const updatedItems = state.items.map((item) => (item.id === action.payload ? { ...item, showDetails: !item.showDetails } : item));
+      return {
+        ...state,
+        items: updatedItems,
+      };
     },
     clearCart(state) {
-      state.items = [];
+      return {
+        ...state,
+        items: [],
+      };
     },
     fetchCartItemsStart(state) {
-      state.isLoading = true;
-      state.error = null;
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
     },
     fetchCartItemsSuccess(state, action) {
-      state.isLoading = false;
-      state.items = action.payload.map((item) => ({ ...item }));
+      const updatedItems = action.payload.map((item) => ({ ...item }));
+      return {
+        ...state,
+        isLoading: false,
+        items: updatedItems,
+      };
     },
     fetchCartItemsFailure(state, action) {
-      state.isLoading = false;
-      state.error = action.payload;
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      };
     },
   },
 });

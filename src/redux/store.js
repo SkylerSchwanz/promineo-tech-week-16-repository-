@@ -8,15 +8,14 @@ import { api } from './slices/apiSlice';
 
 const store = configureStore({
   reducer: {
+    // Reducers
     root: rootReducer,
-    products: productsReducer, // Include the products reducer
+    products: productsReducer,
     cart: cartReducer,
-    filters: filtersReducer, // Add the filters reducer
-    [api.reducerPath]: api.reducer, // Add the api reducer
-    auth: authReducer, // Include your auth reducer
-    // Other reducers go here if you have more slices
+    filters: filtersReducer,
+    [api.reducerPath]: api.reducer,
+    auth: authReducer,
   },
-  // Other options if needed
 });
 
 export default store;

@@ -5,11 +5,8 @@ import { selectProductById } from '../redux/slices/productSlice';
 import { Container, Row, Col } from 'react-bootstrap';
 import { HeaderContainer } from '../components/HeaderContainer';
 import styles from '../styles/ProductDetail.module.css';
-import { addToCart } from '../api/apiService'; // Import the correct function
+import { addToCart } from '../api/apiService';
 import ProductInfo from '../components/ProductInfo';
-
-import { useDispatch } from 'react-redux';
-import { addItemToCart } from '../redux/slices/cartSlice';
 
 function ProductDetail() {
   const { id } = useParams();
@@ -20,7 +17,6 @@ function ProductDetail() {
     // Use the existing 'product' object from the outer scope
     const productPayload = {
       id: product.id,
-      // other product properties
     };
 
     try {
@@ -34,8 +30,6 @@ function ProductDetail() {
   if (!product) {
     return <div>Loading...</div>;
   }
-
-  // Render product details here
 
   return (
     <>

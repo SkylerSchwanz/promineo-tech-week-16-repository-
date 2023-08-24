@@ -16,7 +16,7 @@ export function LoginPage() {
     if (token) {
       navigate('/');
     }
-  }, [token, navigate]); // Add token and navigate as dependencies to useEffect
+  }, [token, navigate]); // Token and navigate are dependencies to useEffect
 
   const handleSuccessfulLogin = () => {
     setError(null);

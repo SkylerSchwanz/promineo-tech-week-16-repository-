@@ -1,4 +1,3 @@
-// CartItem.js
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Card, Button, Collapse, Form, Row, Col } from 'react-bootstrap';
@@ -7,7 +6,6 @@ import styles from '../styles/CartPage.module.css';
 export function CartItem({ item, onRemoveFromCart, onToggleDetails, onUpdateQuantity }) {
   // Get the state of the item's quantity from the Redux store
   const quantity = useSelector((state) => state.cart.items.find((cartItem) => cartItem.id === item.id)?.quantity);
-  console.log(`CartItem! Item ID: ${item.id}`);
 
   // Use a local state variable to keep track of the current value of the input field
   const [inputValue, setInputValue] = useState(quantity);

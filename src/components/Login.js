@@ -70,11 +70,11 @@ export default function Login() {
             </Form.Group>
             <Button
               style={{
-                margin: '15px auto', // This centers horizontally
+                margin: '15px auto',
                 width: '75%',
                 display: 'flex',
-                justifyContent: 'center', // This centers vertically
-                alignItems: 'center', // This centers vertically
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
               variant="primary"
               type="submit"

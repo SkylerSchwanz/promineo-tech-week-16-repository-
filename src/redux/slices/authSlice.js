@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const API_URL = 'http://localhost:3001'
+const API_URL = 'http://localhost:3001';
 
 const authSlice = createSlice({
   name: 'auth',
@@ -13,21 +13,30 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       const { username, accessToken } = action.payload;
-      state.username = username;
-      state.token = accessToken;
-      state.error = null;
-      localStorage.setItem('username', state.username);
-      localStorage.setItem('accessToken', state.token);
+      localStorage.setItem('username', username);
+      localStorage.setItem('accessToken', accessToken);
+      return {
+        ...state,
+        username: username,
+        token: accessToken,
+        error: null,
+      };
     },
     logOut: (state) => {
-      state.username = null;
-      state.token = null;
-      state.error = null;
       localStorage.removeItem('username');
       localStorage.removeItem('accessToken');
+      return {
+        ...state,
+        username: null,
+        token: null,
+        error: null,
+      };
     },
     setError: (state, action) => {
-      state.error = action.payload;
+      return {
+        ...state,
+        error: action.payload,
+      };
     },
   },
 });

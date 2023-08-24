@@ -15,7 +15,7 @@ import { CartPage } from './pages/CartPage';
 function App() {
   const dispatch = useDispatch();
   const tokenFromState = useSelector((state) => state.auth.token);
-  const tokenFromLocalStorage = localStorage.getItem('accessToken'); // Assuming you store token as 'token' in local storage
+  const tokenFromLocalStorage = localStorage.getItem('accessToken');
   const isAuthenticated = tokenFromState || tokenFromLocalStorage;
 
   useEffect(() => {

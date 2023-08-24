@@ -6,26 +6,29 @@ const filtersSlice = createSlice({
   initialState: { nameFilter: '', categoryFilter: '', minRatingFilter: 0, minPriceFilter: 1, maxPriceFilter: Infinity },
   reducers: {
     setNameFilter(state, action) {
-      state.nameFilter = action.payload;
+      return { ...state, nameFilter: action.payload };
     },
     setCategoryFilter(state, action) {
-      state.categoryFilter = action.payload;
+      return { ...state, categoryFilter: action.payload };
     },
     setMinRatingFilter(state, action) {
-      state.minRatingFilter = action.payload;
+      return { ...state, minRatingFilter: action.payload };
     },
     setMinPriceFilter(state, action) {
-      state.minPriceFilter = action.payload;
+      return { ...state, minPriceFilter: action.payload };
     },
     setMaxPriceFilter(state, action) {
-      state.maxPriceFilter = action.payload;
+      return { ...state, maxPriceFilter: action.payload };
     },
     clearFilters(state) {
-      state.nameFilter = '';
-      state.categoryFilter = '';
-      state.minRatingFilter = 0;
-      state.minPriceFilter = 1;
-      state.maxPriceFilter = Infinity;
+      return {
+        ...state,
+        nameFilter: '',
+        categoryFilter: '',
+        minRatingFilter: 0,
+        minPriceFilter: 1,
+        maxPriceFilter: Infinity,
+      };
     },
   },
 });

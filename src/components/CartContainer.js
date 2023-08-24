@@ -22,11 +22,9 @@ export function CartContainer() {
 
   const handleUpdateQuantity = (productId, quantity) => {
     quantity = quantity > 1 ? parseInt(quantity) : 1;
-    console.log(`handleUpdateQuantity fired! Product Id: ${productId}... Quantity: ${quantity}`)
     updateCartItem({ productId, quantity })
       .then((data) => {
         // Update the cart item in the Redux store
-        console.log(`updateCartItem fired!! product ID: ${productId} | ${typeof productId}, quantity: ${quantity} | ${typeof quantity}`)
         dispatch(updateItemQuantity({productId, quantity}));
       })
       .catch((error) => {

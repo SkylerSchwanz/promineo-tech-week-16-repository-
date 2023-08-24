@@ -24,7 +24,7 @@
 }
 
 .Card:hover .title-text {
-    color: var(--test-color); /* Change the color on hover */
+    color: var(--red-color); /* Change the color on hover */
 }
 
 .category-text {
@@ -38,7 +38,7 @@
 }
 
 .filters-container .custom-primary-button {
-  background-color: var(--test-color);
+  background-color: var(--red-color);
   border: none;
 }
 
@@ -48,6 +48,6 @@
 }
 
 .login-button {
-  margin: 0 auto; /* Center the button horizontally */
-  width: 75%; /* Set the width to 75% of the parent container */
+  margin: 0 auto;
+  width: 75%;
 }

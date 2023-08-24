@@ -14,6 +14,15 @@ function Filters() {
   const [minPriceFilter, setMinPriceFilterValue] = useState(1);
   const [maxPriceFilter, setMaxPriceFilterValue] = useState(Infinity);
 
+  const handleClearFilters = () => {
+    setNameFilterValue('');
+    setCategoryFilterValue('');
+    setMinRatingFilterValue(0);
+    setMinPriceFilterValue(1);
+    setMaxPriceFilterValue(Infinity);
+    dispatch(clearFilters());
+  }
+
   const handleApplyFilters = () => {
     dispatch(setNameFilter(nameFilter));
     dispatch(setCategoryFilter(categoryFilter));
@@ -100,7 +109,7 @@ function Filters() {
             <Button variant="primary" onClick={handleApplyFilters}>
               Apply Filters
             </Button>
-            <Button variant="secondary" onClick={() => dispatch(clearFilters())}>
+            <Button variant="secondary" onClick={handleClearFilters}>
               Reset Filters
             </Button>
           </div>

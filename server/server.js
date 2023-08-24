@@ -15,7 +15,7 @@ const SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 10;
 const JWT_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
 app.use(express.json());
-app.use(cors({ credentials: true, origin: CORS_ORIGIN }));; // Replace with your frontend domain
+app.use(cors({ credentials: true, origin: CORS_ORIGIN }));
 
 const registerSchema = Joi.object({
   username: Joi.string().min(3).max(30).required(),
@@ -69,12 +69,23 @@ app.get('/users', (req, res) => {
 
 // POST endpoint for registering
 app.post(`/users/register`, async (req, res) => {
-
   try {
     const { error } = registerSchema.validate(req.body);
     if (error) {
       return res.status(400).send(error.details[0].message);
     }
+
+    // Check if there is already a user with the provided username
+    const existingUser = users.find((user) => user.username === req.body.username);
+    if (existingUser) {
+      return res.status(400).send('Username already exists.');
+    }
+
+    // Check if the username and password are at least 3 characters long
+    if (req.body.username.length < 3 || req.body.password.length < 3) {
+      return res.status(400).send('Username and password must be at least 3 characters long.');
+    }
+
     const hashedPassword = await bcrypt.hash(req.body.password, SALT_ROUNDS);
     const user = { username: req.body.username, password: hashedPassword, cart: [], location: {} };
     users.push(user);
@@ -82,12 +93,23 @@ app.post(`/users/register`, async (req, res) => {
   } catch (error) {
     res.status(500).send('Error registering. Please try again.');
   }
-
 });
+
 
 // POST endpoint for logging in
 app.post(`/users/login`, async (req, res) => {
   try {
+    // Validate the request body using the loginSchema
+    const { error } = loginSchema.validate(req.body);
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
+
+    // Check if the username and password are at least 3 characters long
+    if (req.body.username.length < 3 || req.body.password.length < 3) {
+      return res.status(400).send('Username and password must be at least 3 characters long.');
+    }
+
     // Find the user with the matching username
     const user = users.find((user) => user.username === req.body.username);
     if (!user) {
@@ -232,7 +254,7 @@ app.get('/users/orders', authenticateToken, (req, res, next) => {
   }
 });
 
-// Endpoint to get the user's cart based on their token
+// GET endpoint to get the user's cart based on their token
 app.get('/users/cart', authenticateToken, (req, res, next) => {
   try {
     const user = users.find((user) => user.username === req.user.username);
@@ -252,10 +274,9 @@ app.get('/users/cart', authenticateToken, (req, res, next) => {
 app.post(`/users/:username/cart`, authenticateToken, async (req, res) => {
   //const { userId } = req.params; // User's id from the URL parameter
   const productId = req.body.productId; // Product ID to add to the cart
-
   const user = users.find((user) => user.username === req.user.username);
   if (!user) {
-    return res.status(404).send('User not found.');
+    return res.status(404).json({ message: 'User not found.' });
   }
 
   // Check if the product is already in the cart
@@ -270,7 +291,7 @@ app.post(`/users/:username/cart`, authenticateToken, async (req, res) => {
     try {
       const response = await fetch(`https://fakestoreapi.com/products/${productId}`);
       if (!response.ok) {
-        return res.status(404).send('Product not found.');
+        return res.status(404).json({ message: 'Product not found.' });
       }
 
       const productToAdd = await response.json();
@@ -281,13 +302,14 @@ app.post(`/users/:username/cart`, authenticateToken, async (req, res) => {
       // Assuming 'cart' is an array inside the user object
       user.cart.push(productToAdd);
 
-      res.status(200).send(productToAdd);
+      res.status(200).json(productToAdd);
     } catch (error) {
       console.error(error);
-      res.status(500).send(`Error adding product to cart: ${error.message}`);
+      res.status(500).json({ message: `Error adding product to cart: ${error.message}` });
     }
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);

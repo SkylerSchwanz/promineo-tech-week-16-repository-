@@ -1,10 +1,16 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const api = createApi({
-  // Define endpoints here
+  // Ednpoints
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => fetch('/users', { method: 'GET' }).then((response) => response.json()),
+      queryFn: async () => {
+        const response = await fetch('/users', { method: 'GET' });
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        return response.json();
+      },
     }),
     addToCart: builder.mutation({
       query: ({ productId }) => ({
@@ -15,7 +21,6 @@ export const api = createApi({
         },
       }),
     }),
-    // Define other endpoints as needed
   }),
 });
 

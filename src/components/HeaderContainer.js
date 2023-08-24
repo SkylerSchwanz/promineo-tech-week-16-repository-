@@ -10,7 +10,7 @@ export function HeaderContainer() {
   const username = useSelector((state) => state.auth.username);
   const token = useSelector((state) => state.auth.token);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Initialize dispatch
   const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogout = () => {
