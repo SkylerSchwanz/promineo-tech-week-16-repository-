@@ -7,12 +7,16 @@
   height: auto;
 }
 
+.image-column {
+  display: flex;
+  justify-content: center;
+}
+
 .cart-info {
   margin-bottom: 0.5rem;
 }
 
 .card-body {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+  justify-content: space-around;
+  align-items: center;
 }

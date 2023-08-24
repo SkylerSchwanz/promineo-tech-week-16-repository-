@@ -8,18 +8,27 @@ import styles from '../styles/ProductDetail.module.css';
 import { addToCart } from '../api/apiService'; // Import the correct function
 import ProductInfo from '../components/ProductInfo';
 
+import { useDispatch } from 'react-redux';
+import { addItemToCart } from '../redux/slices/cartSlice';
+
 function ProductDetail() {
   const { id } = useParams();
   const product = useSelector((state) => selectProductById(state, parseInt(id)));
+  const username = useSelector((state) => state.auth.username);
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     // Use the existing 'product' object from the outer scope
     const productPayload = {
       id: product.id,
       // other product properties
     };
 
-    addToCart({ productId: productPayload.id }); // Pass the correct product ID
+    try {
+      // Call the addToCart function and pass in the user ID and product ID
+      await addToCart({ username, productId: productPayload.id });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   }
 
   if (!product) {

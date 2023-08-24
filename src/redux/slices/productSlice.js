@@ -2,14 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const API_URL = 'https://fakestoreapi.com/products';
 
-export const selectProductById = (state, productId) => state.products.products.find((product) => product.id === productId);
-
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-  const response = await fetch(API_URL);
-  const data = await response.json();
-  return data;
-});
-
 const productsSlice = createSlice({
   name: 'products',
   initialState: {
@@ -45,6 +37,14 @@ const productsSlice = createSlice({
       state.products = action.payload;
     });
   },
+});
+
+export const selectProductById = (state, productId) => state.products.products.find((product) => product.id === productId);
+
+export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
+  const response = await fetch(API_URL);
+  const data = await response.json();
+  return data;
 });
 
 export const { setProducts, setNameFilter, setCategoryFilter, setMinRatingFilter, setMinPriceFilter, setMaxPriceFilter } = productsSlice.actions;

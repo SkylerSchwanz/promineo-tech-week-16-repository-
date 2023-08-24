@@ -1,5 +1,3 @@
-// cartSlice.js
-
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -13,7 +11,16 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addItemToCart(state, action) {
-      state.items.push(action.payload);
+      // Check if the product is already in the cart
+      const existingCartItem = state.items.find((item) => item.id === action.payload.id);
+
+      if (existingCartItem) {
+        // Update the quantity of the existing cart item
+        existingCartItem.quantity += 1;
+      } else {
+        // Add the new item to the cart
+        state.items.push({ ...action.payload, quantity: 1 });
+      }
     },
     removeItemFromCart(state, action) {
       // Find the index of the first item in the cart with a matching ID
@@ -22,6 +29,18 @@ const cartSlice = createSlice({
       // If an item with a matching ID was found, remove it from the cart
       if (index !== -1) {
         state.items.splice(index, 1);
+      }
+    },
+    updateItemQuantity(state, action) {
+      const { productId, quantity } = action.payload;
+      state.items.forEach((item, index) => console.log(`updateItemQuantity Loop! Product #${item.id} has index #${index} || Selected product id: ${productId} / selected quantity: ${quantity}`))
+      console.log(productId);
+      const index = state.items.findIndex((item) => item.id === parseInt(productId));
+
+      console.log(`updateItemQuantity fired on product '${state.items[index].title}'.. quantity #${quantity}`);
+      if (index !== -1) {
+        console.log(`updateItemQuantity fired on product '${state.items[index].title}'.. quantity #${quantity}`);
+        state.items[index].quantity = parseInt(quantity);
       }
     },
     toggleItemDetails(state, action) {
@@ -39,7 +58,7 @@ const cartSlice = createSlice({
     },
     fetchCartItemsSuccess(state, action) {
       state.isLoading = false;
-      state.items = action.payload;
+      state.items = action.payload.map((item) => ({ ...item }));
     },
     fetchCartItemsFailure(state, action) {
       state.isLoading = false;
@@ -48,8 +67,16 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItemToCart, removeItemFromCart, toggleItemDetails, clearCart, fetchCartItemsStart, fetchCartItemsSuccess, fetchCartItemsFailure } =
-  cartSlice.actions;
+export const {
+  addItemToCart,
+  removeItemFromCart,
+  updateItemQuantity,
+  toggleItemDetails,
+  clearCart,
+  fetchCartItemsStart,
+  fetchCartItemsSuccess,
+  fetchCartItemsFailure,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;
 

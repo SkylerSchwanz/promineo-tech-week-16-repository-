@@ -34,6 +34,7 @@ const productSchema = Joi.object({
   description: Joi.string().required(),
   category: Joi.string().required(),
   image: Joi.string().uri().required(),
+  quantity: Joi.number().integer().positive().min(1).required(),
   rating: Joi.object({
     rate: Joi.number().positive().required(),
     count: Joi.number().integer().positive().required(),
@@ -58,14 +59,15 @@ app.use((err, req, res, next) => {
   }
 });
 
-
 const users = [];
 const orders = [];
 
+// GET endpoint for fetching all users
 app.get('/users', (req, res) => {
   res.json(users);
 });
 
+// POST endpoint for registering
 app.post(`/users/register`, async (req, res) => {
 
   try {
@@ -83,6 +85,7 @@ app.post(`/users/register`, async (req, res) => {
 
 });
 
+// POST endpoint for logging in
 app.post(`/users/login`, async (req, res) => {
   try {
     // Find the user with the matching username
@@ -131,9 +134,6 @@ app.delete(`/users/cart/:productId`, authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Remove the item with the matching productId from the user's cart
-    //user.cart = user.cart.filter((product) => product.id !== productId);
-
     // Find the index of the first item in the user's cart with a matching productId
     const index = user.cart.findIndex((product) => product.id === productId);
 
@@ -149,7 +149,35 @@ app.delete(`/users/cart/:productId`, authenticateToken, async (req, res) => {
   }
 });
 
+// PUT endpoint for updating the quantity of an item in the cart
+app.put(`/users/cart/:productId`, authenticateToken, async (req, res) => {
+  try {
+    const productId = Number(req.params.productId); // Convert to number
+    const { quantity } = req.body; // Get the quantity from the request body
+    const username = req.user.username; // Use req.user.username
 
+    // Find the user with the matching username
+    const user = users.find((user) => user.username === username);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find the item with the matching productId in the user's cart
+    const item = user.cart.find((product) => product.id === productId);
+
+    // If an item with a matching productId was found, update its quantity
+    if (item) {
+      item.quantity = parseInt(quantity);
+    }
+
+    res.json({ item });
+  } catch (error) {
+    console.error('Error updating item quantity:', error);
+    res.status(500).send('An error occurred while updating the item quantity. Please try again later.');
+  }
+});
+
+// POST endpoint for placing an order
 app.post('/users/place-order', authenticateToken, async (req, res, next) => {
   try {
     // Find the user with the matching username
@@ -158,7 +186,7 @@ app.post('/users/place-order', authenticateToken, async (req, res, next) => {
       throw new CustomError('User not found.', 404);
     }
 
-    // Assuming 'cart' is an array inside the user object
+    // 'cart' is an array inside the user object
     const userCart = user.cart;
 
     // Validate the request body
@@ -220,9 +248,9 @@ app.get('/users/cart', authenticateToken, (req, res, next) => {
   }
 });
 
-
-app.post(`/users/:id/cart`, authenticateToken, async (req, res) => {
-  const { id } = req.params; // User's id from the URL parameter
+// POST endpoint for adding product to user's account
+app.post(`/users/:username/cart`, authenticateToken, async (req, res) => {
+  //const { userId } = req.params; // User's id from the URL parameter
   const productId = req.body.productId; // Product ID to add to the cart
 
   const user = users.find((user) => user.username === req.user.username);
@@ -230,22 +258,34 @@ app.post(`/users/:id/cart`, authenticateToken, async (req, res) => {
     return res.status(404).send('User not found.');
   }
 
-  // Fetch the product details from the FakeStore API using the provided product ID
-  try {
-    const response = await fetch(`https://fakestoreapi.com/products/${productId}`);
-    if (!response.ok) {
-      return res.status(404).send('Product not found.');
+  // Check if the product is already in the cart
+  const existingCartItem = user.cart.find((item) => item.id === productId);
+
+  if (existingCartItem) {
+    // Update the quantity of the existing cart item
+    existingCartItem.quantity += 1;
+    res.json(existingCartItem);
+  } else {
+    // Fetch the product details from the FakeStore API using the provided product ID
+    try {
+      const response = await fetch(`https://fakestoreapi.com/products/${productId}`);
+      if (!response.ok) {
+        return res.status(404).send('Product not found.');
+      }
+
+      const productToAdd = await response.json();
+
+      // Add a quantity property to the product with an initial value of 1
+      productToAdd.quantity = 1;
+
+      // Assuming 'cart' is an array inside the user object
+      user.cart.push(productToAdd);
+
+      res.status(200).send(productToAdd);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(`Error adding product to cart: ${error.message}`);
     }
-
-    const productToAdd = await response.json();
-
-    // Assuming 'cart' is an array inside the user object
-    user.cart.push(productToAdd);
-
-    res.status(200).send(productToAdd);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(`Error adding product to cart: ${error.message}`);
   }
 });
 

@@ -26,7 +26,7 @@ export function CartPage() {
     dispatch(fetchCartItems());
   }, [dispatch]);
 
-  const totalAmount = cartState.items.reduce((total, item) => total + item.price, 0);
+  const totalAmount = cartState.items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <>

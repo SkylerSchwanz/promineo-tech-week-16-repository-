@@ -1,11 +1,11 @@
 const BASE_URL = 'http://localhost:3001';
 
-export const addToCart = async ({ productId }) => {
+export const addToCart = async ({ username, productId }) => {
   // Get access token
   const accessToken = localStorage.getItem('accessToken');
 
   try {
-    const response = await fetch(`${BASE_URL}/users/${productId}/cart`, {
+    const response = await fetch(`${BASE_URL}/users/${username}/cart`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,6 +84,38 @@ export const placeOrder = async () => {
   } catch (error) {
     console.error('Error placing order:', error); // Log the caught error
     console.error('Error response status:', error.response?.status); // Log the response status code if available
+    throw error;
+  }
+};
+
+export const updateCartItem = async ({ productId, quantity }) => {
+  // Get access token
+  const accessToken = localStorage.getItem('accessToken');
+
+  try {
+    const response = await fetch(`${BASE_URL}/users/cart/${productId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ quantity }),
+    });
+
+    // Read the response data as text
+    const data = await response.text();
+
+    // Attempt to parse the response data as JSON
+    try {
+      const jsonData = JSON.parse(data);
+      return jsonData;
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      throw parseError;
+    }
+  } catch (error) {
+    console.error('Error updating cart item:', error);
+    console.error('Error response status:', error.response?.status);
     throw error;
   }
 };

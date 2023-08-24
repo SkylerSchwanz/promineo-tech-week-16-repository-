@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart } from '../api/apiService';
-import { removeItemFromCart, toggleItemDetails, fetchCartItems } from '../redux/slices/cartSlice';
-import { CartItem } from '../components/CartItem';
+import { removeFromCart, updateCartItem } from '../api/apiService';
+import { removeItemFromCart, toggleItemDetails, updateItemQuantity, fetchCartItems } from '../redux/slices/cartSlice';
+import { CartItem } from './CartItem';
 
 export function CartContainer() {
   const cartState = useSelector((state) => state.cart);
@@ -20,18 +20,34 @@ export function CartContainer() {
       });
   };
 
+  const handleUpdateQuantity = (productId, quantity) => {
+    quantity = quantity > 1 ? parseInt(quantity) : 1;
+    console.log(`handleUpdateQuantity fired! Product Id: ${productId}... Quantity: ${quantity}`)
+    updateCartItem({ productId, quantity })
+      .then((data) => {
+        // Update the cart item in the Redux store
+        console.log(`updateCartItem fired!! product ID: ${productId} | ${typeof productId}, quantity: ${quantity} | ${typeof quantity}`)
+        dispatch(updateItemQuantity({productId, quantity}));
+      })
+      .catch((error) => {
+        console.error('Error updating cart item:', error);
+      });
+  };
+
   useEffect(() => {
     dispatch(fetchCartItems());
   }, [dispatch]);
 
   return (
-        <>
-          <h1>Your Cart</h1>
-          {cartState.isLoading ? (
-            <h1>Loading...</h1>
-          ) : (
-            cartState.items.map((item, index) => <CartItem key={index} item={item} onRemoveFromCart={handleRemoveFromCart} onToggleDetails={toggleDetails} />)
-          )}
-        </>
+    <>
+      <h1>Your Cart</h1>
+      {cartState.isLoading ? (
+        <h1>Loading...</h1>
+      ) : (
+        cartState.items.map((item, index) => (
+          <CartItem key={item.id} item={item} onRemoveFromCart={handleRemoveFromCart} onToggleDetails={toggleDetails} onUpdateQuantity={handleUpdateQuantity} />
+        ))
+      )}
+    </>
   );
 }
